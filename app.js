@@ -17,6 +17,8 @@ mongoose.connect(
     .then(() => console.log('Connected to MongoDB'))
     .catch((err) => console.error('MongoDB connection error:', err));
 
+mongoose.Promise = global.Promise;
+
 // Middleware
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: false }));

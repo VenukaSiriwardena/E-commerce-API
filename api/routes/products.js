@@ -6,9 +6,30 @@ const Product = require('../models/product');
 
 router.get('/', (req, res, next) => {
     Product.find()
+    .select('name price _id') //control which data is returned
     .exec()
     .then((products) => {
-        res.status(200).json(products);
+        const response = {
+            count: products.length,
+            products: products.map((product) => {
+                return {
+                    name: product.name,
+                    price: product.price,
+                    _id: product._id,
+                    request: {
+                        type: 'GET',
+                        url: 'http://localhost:3000/products/' + product._id
+                    }
+                };
+            })
+        };
+        if (products.length > 0) {
+            res.status(200).json(response);
+        } else {
+            res.status(404).json({
+                message: 'No entries found'
+            });
+        }
     })
     .catch((err) => {
         console.error('Database error:', err);
@@ -19,31 +40,36 @@ router.get('/', (req, res, next) => {
     });
 });
 
-router.post('/', (req, res, next) => { 
+router.post('/', (req, res, next) => {
     const product = new Product({
         _id: new mongoose.Types.ObjectId(),
         name: req.body.name,
         price: req.body.price
     });
+
     product
-    .save()
-    .then(result => {
-        console.log(result);
-        res.status(201).json({
-            message: 'Handling POST requests to /products',
-            createdProduct: result
-        });
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            error: err
+        .save()
+        .then(result => {
+            console.log(result);
+            res.status(201).json({
+                message: 'Handling POST requests to /products',
+                createdProduct: {
+                    name: result.name,
+                    price: result.price,
+                    _id: result._id,
+                    request: {
+                        type: 'GET',
+                        url: 'http://localhost:3000/products/' + result._id
+                    }
+                }
+            });
         })
-    });
-    res.status(201).json({
-        message: 'Handling POST requests to /products',
-        createdProduct: product
-    });
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
 });
 
 router.get('/:productId', (req, res, next) => {
