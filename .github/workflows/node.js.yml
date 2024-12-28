@@ -29,4 +29,6 @@ jobs:
         touch .env
         echo "MONGO_ATLAS_PASSWORD=${{ secrets.MONGO_ATLAS_PASSWORD }}" >> .env
         echo "JWT_KEY=${{ secrets.JWT_KEY }}" >> .env
-    - run: pm2 restart BackendAPI
+    - run: |
+        pm2 describe BackendAPI || pm2 start server.js --name BackendAPI
+        pm2 restart BackendAPI --update-env
