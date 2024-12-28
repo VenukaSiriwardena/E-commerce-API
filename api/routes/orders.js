@@ -3,7 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 
 const Order = require('../models/order'); 
-const checkAuth = require('../middleware/check-auth');
+const checkAuth = require('../middleware/check.auth');
 
 router.get('/', checkAuth, (req, res, next) => {
     Order.find()
