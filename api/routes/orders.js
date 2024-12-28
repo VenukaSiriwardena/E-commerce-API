@@ -2,11 +2,10 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 
-const Order = require('../models/order');
-const Product = require('../models/product');
-const product = require('../models/product');
+const Order = require('../models/order'); 
+const checkAuth = require('../middleware/check-auth');
 
-router.get('/', (req, res, next) => {
+router.get('/', checkAuth, (req, res, next) => {
     Order.find()
     .populate('product') // get the product associated with the order
     .exec()
@@ -34,7 +33,7 @@ router.get('/', (req, res, next) => {
     });
 });
 
-router.post('/', async (req, res) => {
+router.post('/', checkAuth, async (req, res) => {
     try {
         // Validate input
         if (!mongoose.Types.ObjectId.isValid(req.body.product)) {
@@ -71,7 +70,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.get('/:orderId', (req, res, next) => {
+router.get('/:orderId', checkAuth, (req, res, next) => {
     Order.findById(req.params.orderId)
     .populate('product') // get the product associated with the order
     .exec()
@@ -96,13 +95,13 @@ router.get('/:orderId', (req, res, next) => {
     })
 });
 
-router.patch('/:orderId', (req, res, next) => {
+router.patch('/:orderId', checkAuth, (req, res, next) => {
     res.status(200).json({
         message: 'Updated order'
     });
 });
 
-router.delete('/:orderId', (req, res, next) => {
+router.delete('/:orderId', checkAuth, (req, res, next) => {
     const orderId = req.params.orderId;
 
     // Ensure the ID is valid

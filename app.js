@@ -9,6 +9,7 @@ dotenv.config();
 
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
+const signupRoutes = require('./api/routes/user')
 
 // MongoDB Connection
 mongoose.connect(
@@ -28,6 +29,7 @@ app.use(cors());
 // Routes
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
+app.use('/user', signupRoutes);
 
 // 404 Error Handling
 app.use((req, res, next) => {
